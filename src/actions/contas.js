@@ -31,6 +31,7 @@ export async function create(formData) {
 }
 
 export async function getContas() {
+    console.info("get contas from " + url)
     try{
         const result = await fetch(url)
         return result.json()
