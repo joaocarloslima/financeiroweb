@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-const url = process.env.API_BASE_URL + "/contas"
+const url = process.env.NEXT_PUBLIC_API_BASE_URL + "/contas"
 
 export async function create(formData) {
     console.info("post to " + url)
