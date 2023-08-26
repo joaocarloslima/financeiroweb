@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+const url = process.env.API_BASE_URL + "/contas"
+
 export async function create(formData) {
     const requestOptions = {
         method: "POST",
@@ -11,17 +13,29 @@ export async function create(formData) {
         }
     };
 
-    const url = process.env.API_BASE_URL + "/contas"
-
-    const result = await fetch(url, requestOptions);
-
-    if (result.status !== 201) {
-        const json = await result.json();
-        const errors = json.errors
-        const mensagens = errors.reduce( (str, erro) => str += ". " + erro.defaultMessage, "" )
-        return { erro: result.status + ". Erro ao criar conta" + mensagens }
+    try{
+        const result = await fetch(url, requestOptions);
+    
+        if (result.status !== 201) {
+            const json = await result.json();
+            const errors = json.errors
+            const mensagens = errors.reduce( (str, erro) => str += ". " + erro.defaultMessage, "" )
+            return { erro: result.status + ". Erro ao criar conta" + mensagens }
+        }
+        revalidatePath("/contas")
+        return { sucesso: "Conta criada com sucesso" }
+    }catch(error){
+        return { erro: error.message }
     }
-    revalidatePath("/contas")
-    return { sucesso: "Conta criada com sucesso" }
     
 }
+
+export async function getContas() {
+    try{
+        const result = await fetch(url)
+        return result.json()
+    }
+    catch(error){
+        return { erro: error.message }
+    }
+  }

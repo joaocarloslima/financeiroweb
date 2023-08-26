@@ -2,13 +2,7 @@ import NavBar from "@/components/NavBar";
 import Conta from "./Conta";
 import ButtonLink from "@/components/Button";
 import { CreditCardIcon } from "@heroicons/react/24/solid";
-
-async function getContas() {
-  const url = "http://localhost:8080/api/contas"
-  const result = await fetch(url)
-
-  return result.json()
-}
+import { getContas } from "@/actions/contas";
 
 export default async function Contas() {
   const data = await getContas()
