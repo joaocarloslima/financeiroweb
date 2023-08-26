@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 const url = process.env.API_BASE_URL + "/contas"
 
 export async function create(formData) {
+    console.info("post to " + url)
     const requestOptions = {
         method: "POST",
         body: JSON.stringify(Object.fromEntries(formData)), 
