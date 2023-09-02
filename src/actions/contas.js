@@ -1,45 +1,35 @@
 'use server'
 
-import { revalidatePath } from "next/cache";
-
-//const url = process.env.NEXT_PUBLIC_API_BASE_URL + "/contas"
-const url = "https://financeiroback-production.up.railway.app" + "/contas"
-
+import { revalidatePath } from "next/cache"
+const url =  process.env.NEXT_PUBLIC_BASE_URL + "/contas"
 
 export async function create(formData) {
-    console.info("post to " + url)
-    const requestOptions = {
-        method: "POST",
-        body: JSON.stringify(Object.fromEntries(formData)), 
-        headers: {
-            "Content-Type": "application/json"
-        }
-    };
-
-    try{
-        const result = await fetch(url, requestOptions);
-    
-        if (result.status !== 201) {
-            const json = await result.json();
-            const errors = json.errors
-            const mensagens = errors.reduce( (str, erro) => str += ". " + erro.defaultMessage, "" )
-            return { erro: result.status + ". Erro ao criar conta" + mensagens }
-        }
-        revalidatePath("/contas")
-        return { sucesso: "Conta criada com sucesso" }
-    }catch(error){
-        return { erro: error.message }
+    const options = {
+      method: "POST",
+      body: JSON.stringify(Object.fromEntries(formData)),
+      headers: {
+        "Content-Type": "application/json"
+      }
     }
-    
+    const result = await fetch(url, options)
+
+    if(result.status !== 201){
+      return {message: "Erro ao criar a conta. Verifique os campos."}
+    }
+    revalidatePath("/contas")
+    return {ok: "Conta criada com sucesso"}
+
 }
 
-export async function getContas() {
-    console.info("get contas from " + url)
-    try{
-        const result = await fetch(url)
-        return result.json()
-    }
-    catch(error){
-        return { erro: error.message }
-    }
+export async function getContas(){
+  console.log(url)
+  const result = await fetch(url)
+  const json = await result.json()
+  if(!result.ok){
+    const message = json.message
+    throw new Error(`Falha ao obter dados das contas. (${result.status} - ${message})` )
   }
+
+  return json
+}
+   

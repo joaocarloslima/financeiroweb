@@ -1,47 +1,45 @@
-'use client'
+"use client"
+
 import { create } from "@/actions/contas";
-import ButtonLink from "@/components/Button";
+import Button from "@/components/Button";
+import ButtonLink from "@/components/ButtonLink";
+import InputText from "@/components/InputText";
 import NavBar from "@/components/NavBar";
-import TextField from "@/components/TextField";
-import { CheckIcon, ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { useState } from "react";
+import { redirect } from 'next/navigation'
 
-export default function ContaForm() {
-    const [message, setMessage] = useState('')
 
-    async function onCreate(formData) {
-        const result = await create(formData)
-        if (result.erro) {
-            setMessage(result.erro)
+export default function FormContas() {
+    const [message, setMessage] = useState("")
+   
+    async function handleSubmit(formData){
+        const res = await create(formData)
+        if (res.message){
+            setMessage(res.message)
             return
         }
-        redirect('/contas')
+        redirect("/contas")
     }
 
     return (
         <>
-            <NavBar active={"contas"} />
+            <NavBar />
 
-            <main className="bg-slate-900 p-11 m-10 rounded-lg text-slate-200 max-w-md mx-auto">
-                <div className="flex justify-between">
-                    <h2 className="text-2xl font-bold">Cadastrar Conta</h2>
+            <main className="bg-slate-900 p-11 mt-10 rounded-lg text-slate-200 max-w-md m-auto">
+                <h2 className="text-2xl font-bold">Cadastrar Conta</h2>
+
+                <form action={handleSubmit}>
+                    <InputText label="nome" id="nome" name="nome" />
+                    <InputText label="saldo inicial" id="saldoInicial" name="saldoInicial" />
+                    <InputText label="icone" id="icone" name="icone" />
+
+                <div className="flex justify-around">
+                    <ButtonLink variante="secundary" href="/contas">cancelar</ButtonLink>
+                    <Button>salvar</Button>
                 </div>
-
-                <form action={onCreate} className="max-w-sm">
-                    <TextField  name="nome" label="nome" id="nome" placeholder="digite um nome para a conta" />
-                    <TextField  name="saldoInicial" label="saldo inicial" type="number" id="saldo" prefix="R$" />
-                    <TextField name="icone" label="icone" id="icone" />
-
-                    <div className="flex w-full justify-around">
-                        <ButtonLink variante="default" href="/contas" icon={<ArrowLeftIcon />}>cancelar</ButtonLink>
-                        <ButtonLink href="/contas/new" icon={<CheckIcon />}>salvar</ButtonLink>
-                        <input type="submit" />
-                    </div>
-                    <span>{message}</span>
+                <p>{message}</p>
                 </form>
-
+                
             </main>
         </>
     )
